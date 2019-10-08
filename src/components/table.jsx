@@ -3,17 +3,37 @@ import React, { Component } from "react";
 class Table extends Component {
   state = {
     headers: [
-      "Регистр 0",
-      "Регистр 1",
-      "Регистр 2",
-      "Регистр 3",
-      "Регистр 4",
-      "Регистр 5",
-      "Регистр 6",
-      "Регистр 7",
+      "reg0",
+      "reg1",
+      "reg2",
+      "reg3",
+      "reg4",
+      "reg5",
+      "reg6",
+      "reg7",
       "dec"
     ],
-    bytes: [{ id: 0, value: 6 }, { id: 1, value: 7 }, { id: 2, value: 9 }]
+    headers_result: [
+      "reg0",
+      "reg1",
+      "reg2",
+      "reg3",
+      "reg4",
+      "reg5",
+      "reg6",
+      "reg7",
+      "reg8",
+      "reg9",
+      "reg10",
+      "reg11",
+      "reg12",
+      "reg13",
+      "reg14",
+      "reg15",
+      "dec"
+    ],
+    bytes: [{ id: 0, value: 6 }, { id: 1, value: 7 }, { id: 2, value: 9 }],
+    result: { value: 1 }
   };
   bgColors = {
     Default: "#81b71b",
@@ -45,6 +65,27 @@ class Table extends Component {
             key={key}
             onClick={() => this.onClickCell(byte, index)}
           >
+            1
+          </td>
+        )
+      );
+      number = Math.floor(number / 2);
+    }
+    return bits;
+  };
+
+  binarizeResult = byte => {
+    let number = byte.value;
+    const bits = [];
+    for (let index = 0; index < 16; index++) {
+      const key = index.toString();
+      bits.push(
+        number % 2 === 0 ? (
+          <td className="align-middle text-center" key={key}>
+            0
+          </td>
+        ) : (
+          <td className="align-middle text-center" key={key}>
             1
           </td>
         )
@@ -93,6 +134,12 @@ class Table extends Component {
       </th>
     ));
 
+    const headersResult = this.state.headers_result.map(header => (
+      <th scope="col" key={header}>
+        {header}
+      </th>
+    ));
+
     const bytes = this.state.bytes.map((byte, ind) => (
       <tr key={ind} style={{ backgroundColor: this.chooseColor(byte.value) }}>
         {this.binarize(byte)}
@@ -115,6 +162,19 @@ class Table extends Component {
       </tr>
     ));
 
+    const result = (
+      <tr key="result" style={{ backgroundColor: this.bgColors.White }}>
+        {this.binarizeResult(this.state.result)}
+        <td className="align-middle text-center">{this.state.result.value}</td>
+        <td
+          style={{
+            backgroundColor: this.bgColors.White,
+            borderColor: this.bgColors.White
+          }}
+        ></td>
+      </tr>
+    );
+
     return (
       <div className="container" style={{ marginTop: 80 }}>
         <table className="table table-sm table-bordered">
@@ -123,9 +183,39 @@ class Table extends Component {
           </thead>
           <tbody>{bytes}</tbody>
         </table>
-        <button className="btn btn-primary" onClick={this.addByte}>
-          Add new row
-        </button>
+        <div className="row">
+          <div className="col">
+            <button
+              className="btn btn-primary"
+              style={{ margin: 10 }}
+              onClick={this.addByte}
+            >
+              Add new row
+            </button>
+            <button
+              className="btn btn-primary"
+              style={{ margin: 10 }}
+              onClick={this.addByte}
+            >
+              Multiply
+            </button>
+            <button
+              className="btn btn-primary"
+              style={{ margin: 10 }}
+              onClick={this.addByte}
+            >
+              Summarize
+            </button>
+
+            <h2>Результат</h2>
+            <table className="table table-sm table-bordered">
+              <thead>
+                <tr>{headersResult}</tr>
+              </thead>
+              <tbody>{result}</tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }
